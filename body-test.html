@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>Body Shape · 身材配件完成版 + 商品搜尋測試</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --card-bg: #ffffff;
+      --primary: #222;
+      --accent: #ff6b6b;
+      --muted: #777;
+      --border-radius-lg: 18px;
+      --border-radius-sm: 10px;
+      --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #ffecec 0, #f5f5f7 45%, #f5f5f7 100%);
+      color: var(--primary);
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    header { margin-bottom: 20px; }
+
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .logo-pill {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff6b6b, #ff9f43);
+      box-shadow: 0 6px 15px rgba(255, 107, 107, 0.5);
+    }
+
+    .subtitle {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 840px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px 20px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .pill {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f3f3f8;
+      color: var(--muted);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 14px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13px;
+    }
+
+    label { font-weight: 500; }
+
+    .hint {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    select,
+    input[type="number"] {
+      padding: 8px 10px;
+      border-radius: var(--border-radius-sm);
+      border: 1px solid #e0e0ea;
+      background: #fafafa;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    select:focus,
+    input[type="number"]:focus {
+      border-color: #ff8a8a;
+      box-shadow: 0 0 0 2px rgba(255, 138, 138, 0.35);
+      background: #ffffff;
+    }
+
+    .checkbox-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .checkbox-row label {
+      font-weight: 400;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      transform: scale(0.9);
+    }
+
+    .primary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #ff6b6b, #ff9f43);
+      color: #fff;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(255, 107, 107, 0.5);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.1s ease;
+    }
+
+    .primary-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 4px 10px rgba(255, 107, 107, 0.6);
+      opacity: 0.95;
+    }
+
+    .primary-btn[disabled] {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .btn-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .status-text {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .status-text.loading::before { content: "⏳ "; }
+    .status-text.done::before    { content: "✨ "; }
+    .status-text.error::before   { content: "⚠️ "; }
+
+    .image-wrapper {
+      border-radius: var(--border-radius-lg);
+      background: linear-gradient(125deg, #fff7f7, #f9fbff);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .image-inner {
+      flex: 1;
+      border-radius: 16px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px solid #f0f0f5;
+      aspect-ratio: 3 / 4;
+    }
+
+    #result-image {
+      max-width: 100%;
+      max-height: 100%;
+      display: block;
+      object-fit: contain;
+    }
+
+    .image-placeholder {
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      padding: 12px;
+    }
+
+    .desc {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .product-card {
+      display: grid;
+      grid-template-columns: 60px minmax(0, 1fr);
+      gap: 8px;
+      border-radius: 10px;
+      border: 1px solid #eee;
+      padding: 6px 8px;
+      background: #fafafa;
+    }
+
+    .product-thumb {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #999;
+    }
+
+    .product-thumb img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    .product-main {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .product-title {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .product-meta {
+      font-size: 11px;
+      color: #777;
+    }
+
+    .product-price {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .product-link {
+      font-size: 11px;
+      color: #ff7b7b;
+      text-decoration: none;
+    }
+
+    .product-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="title">
+        <span class="logo-pill"></span>
+        <span>Body Shape Test · 身材配件完成版 + 商品搜尋測試</span>
+      </div>
+      <div class="subtitle">
+        後端使用「身材版本2025 v1」＋配件控制（包包 / 帽子 / 外套）。這個頁面另外加上 SerpApi 商品搜尋，讓你看到實際的商品名稱與連結。
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- 左側：條件輸入 -->
+      <section class="card">
+        <div class="card-title">
+          測試條件
+          <span class="pill">Step 1 · 身材＋配件設定</span>
+        </div>
+
+        <form id="body-form" onsubmit="event.preventDefault(); generateOutfit();">
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="gender">性別</label>
+              <select id="gender" required>
+                <option value="female">女性</option>
+                <option value="male">男性</option>
+                <option value="neutral">中性 / 不拘</option>
+              </select>
+              <div class="hint">只影響人物形象，不限制衣服款式。</div>
+            </div>
+
+            <div class="form-field">
+              <label for="age">年齡</label>
+              <input type="number" id="age" min="10" max="80" value="25" required />
+              <div class="hint">例如：18、25、35、45…</div>
+            </div>
+
+            <div class="form-field">
+              <label for="height">身高（cm）</label>
+              <input type="number" id="height" min="140" max="210" value="165" required />
+              <div class="hint">建議一次固定身高，只改體重做比較。</div>
+            </div>
+
+            <div class="form-field">
+              <label for="weight">體重（kg）</label>
+              <input type="number" id="weight" min="35" max="150" value="55" required />
+              <div class="hint">可以測試 45 / 60 / 80 / 100 kg 的差異。</div>
+            </div>
+
+            <div class="form-field">
+              <label for="style">風格</label>
+              <select id="style">
+                <option value="casual">休閒日常</option>
+                <option value="minimal">極簡通勤</option>
+                <option value="street">街頭風</option>
+                <option value="sporty">運動風</option>
+                <option value="smart">Smart Casual</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label for="temp">溫度（°C）</label>
+              <input type="number" id="temp" value="22" />
+              <div class="hint">會影響衣服厚度，身材不受影響。</div>
+            </div>
+
+            <div class="form-field">
+              <label>身材預估（BMI）</label>
+              <div id="bmi-info" class="hint">BMI：--，身型：--</div>
+            </div>
+
+            <div class="form-field">
+              <label>配件選擇</label>
+              <div class="checkbox-row">
+                <label>
+                  <input type="checkbox" id="acc-bag" checked />
+                  包包
+                </label>
+                <label>
+                  <input type="checkbox" id="acc-hat" />
+                  帽子
+                </label>
+                <label>
+                  <input type="checkbox" id="acc-coat" />
+                  外套 / 罩衫 / 夾克
+                </label>
+              </div>
+              <div class="hint">這三個會直接影響後端 prompt，要看模型有沒有乖乖照做。</div>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <span id="status" class="status-text">設定好條件後，按下「產生 AI 穿搭示意圖」。</span>
+            <button type="submit" id="generate-btn" class="primary-btn">
+              🧍‍♀️ 產生 AI 穿搭示意圖
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- 右側：結果 -->
+      <section class="card">
+        <div class="card-title">
+          圖像與商品測試
+          <span class="pill">Step 2 · 查看 AI 圖像 & 商品搜尋結果</span>
+        </div>
+
+        <div class="image-wrapper">
+          <div class="image-inner">
+            <img id="result-image" src="" alt="Outfit preview" style="display:none;" />
+            <div id="image-placeholder" class="image-placeholder">
+              還沒有結果。<br />
+              先產生一次 AI 穿搭示意圖，再按下下面的「抓類似商品」。
+            </div>
+          </div>
+          <div class="desc">
+            後端使用「身材版本2025 v1」，先畫貼身素色身材基底圖，再在同一個身材上套 UNIQLO 風格穿搭＋配件條件。
+          </div>
+        </div>
+
+        <!-- 類似商品搜尋結果區塊（SerpApi 測試） -->
+        <div style="margin-top: 14px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+            <div style="font-size:13px; color:#555; font-weight:500;">
+              類似商品（SerpApi / Google Shopping 測試）
+            </div>
+            <button
+              type="button"
+              onclick="searchSimilarProducts()"
+              style="
+                border:none;
+                border-radius:999px;
+                padding:4px 10px;
+                font-size:11px;
+                cursor:pointer;
+                background:#f3f3f8;
+                color:#555;
+              "
+            >
+              🔍 抓類似商品
+            </button>
+          </div>
+          <div id="product-status" class="desc" style="font-size:11px; margin-bottom:4px;">
+            按下「抓類似商品」後，會用目前性別＋風格去呼叫 /api/search-products。
+          </div>
+          <div
+            id="product-results"
+            style="
+              display:flex;
+              flex-direction:column;
+              gap:8px;
+              max-height:220px;
+              overflow-y:auto;
+              padding-right:4px;
+              border-top:1px solid #f0f0f5;
+              margin-top:4px;
+              padding-top:6px;
+            "
+          >
+            <!-- JS 會在這裡塞商品卡片 -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Debug Tips：如果商品區塊顯示錯誤訊息，請同時打開 DevTools（F12）看 Console / Network。
+    </footer>
+  </div>
+
+  <script>
+    function getBmiTag(height, weight) {
+      const h = height / 100;
+      const bmi = weight / (h * h);
+      if (!isFinite(bmi)) return { bmi: null, label: "—" };
+
+      if (bmi < 19) return { bmi, label: "偏瘦（Slim）" };
+      if (bmi < 25) return { bmi, label: "正常（Average）" };
+      if (bmi < 30) return { bmi, label: "微胖（Slightly chubby）" };
+      return { bmi, label: "豐滿（Plus-size）" };
+    }
+
+    function updateBmiDisplay() {
+      const h = parseFloat(document.getElementById("height").value);
+      const w = parseFloat(document.getElementById("weight").value);
+      const el = document.getElementById("bmi-info");
+      if (!h || !w) {
+        el.textContent = "BMI：--，身型：--";
+        return;
+      }
+      const { bmi, label } = getBmiTag(h, w);
+      if (!bmi) {
+        el.textContent = "BMI：--，身型：--";
+        return;
+      }
+      el.textContent = `BMI：約 ${bmi.toFixed(1)}，身型推估：${label}`;
+    }
+
+    document.getElementById("height").addEventListener("input", updateBmiDisplay);
+    document.getElementById("weight").addEventListener("input", updateBmiDisplay);
+    updateBmiDisplay();
+
+    async function generateOutfit() {
+      const gender = document.getElementById("gender").value;
+      const age = parseInt(document.getElementById("age").value, 10);
+      const style = document.getElementById("style").value;
+      const temp = parseFloat(document.getElementById("temp").value);
+      const height = parseFloat(document.getElementById("height").value);
+      const weight = parseFloat(document.getElementById("weight").value);
+      const withBag = document.getElementById("acc-bag").checked;
+      const withHat = document.getElementById("acc-hat").checked;
+      const withCoat = document.getElementById("acc-coat").checked;
+
+      const status = document.getElementById("status");
+      const btn = document.getElementById("generate-btn");
+      const img = document.getElementById("result-image");
+      const placeholder = document.getElementById("image-placeholder");
+
+      if (!height || !weight || !age) {
+        status.textContent = "請先輸入完整的年齡、身高與體重。";
+        status.className = "status-text error";
+        return;
+      }
+
+      status.textContent = "正在產生 AI 身材＋穿搭＋配件示意圖（後端會跑雙階段生成）…";
+      status.className = "status-text loading";
+      btn.disabled = true;
+
+      try {
+        const response = await fetch("/api/generate-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            gender,
+            age,
+            style,
+            temp,
+            height,
+            weight,
+            withBag,
+            withHat,
+            withCoat
+          })
+        });
+
+        const rawText = await response.text();
+        let data;
+        try {
+          data = JSON.parse(rawText);
+        } catch {
+          console.error("generate-image raw:", rawText);
+          throw new Error("API 回傳非 JSON：" + rawText.slice(0, 120));
+        }
+
+        if (!response.ok) {
+          console.error("generate-image error detail:", data);
+          throw new Error("API 回應失敗：" + response.status + "／" + (data.error || "unknown"));
+        }
+
+        if (!data.image) {
+          throw new Error("API 沒有回傳圖片資料");
+        }
+
+        img.src = "data:image/png;base64," + data.image;
+        img.style.display = "block";
+        placeholder.style.display = "none";
+
+        status.textContent = "已完成，接著可以測試『抓類似商品』功能。";
+        status.className = "status-text done";
+      } catch (err) {
+        console.error(err);
+        status.textContent = "產生圖片時發生錯誤：" + err.message;
+        status.className = "status-text error";
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // ===== 商品搜尋（SerpApi） =====
+
+    function buildTestItemsForSearch() {
+      const gender = document.getElementById("gender").value;
+      const style = document.getElementById("style").value;
+
+      const genderText =
+        gender === "female"
+          ? "female"
+          : gender === "male"
+          ? "male"
+          : "unisex";
+
+      let styleText = "casual";
+      if (style === "minimal") styleText = "minimalist";
+      else if (style === "street") styleText = "streetwear";
+      else if (style === "sporty") styleText = "sporty";
+      else if (style === "smart") styleText = "smart casual";
+
+      // 先 hardcode 三個部位：上衣 / 下身 / 鞋子
+      return [
+        {
+          slot: "top",
+          generic_name: "oversized cotton crew neck t-shirt",
+          color: "white",
+          style: styleText,
+          gender: genderText
+        },
+        {
+          slot: "bottom",
+          generic_name: "straight leg jeans",
+          color: "light blue",
+          style: styleText,
+          gender: genderText
+        },
+        {
+          slot: "shoes",
+          generic_name: "white low-top sneakers",
+          color: "white",
+          style: styleText,
+          gender: "unisex"
+        }
+      ];
+    }
+
+    function renderProductResults(data) {
+      const container = document.getElementById("product-results");
+      const status = document.getElementById("product-status");
+      container.innerHTML = "";
+
+      if (!data || !Array.isArray(data.results) || data.results.length === 0) {
+        status.textContent = "沒有取回任何商品結果。";
+        return;
+      }
+
+      status.textContent =
+        "以下為 /api/search-products 透過 SerpApi 回傳的部分 Google Shopping 商品結果（每個部位最多 3 筆）：";
+
+      data.results.forEach((block) => {
+        const slot = block.slot || "item";
+        const query = block.query || "";
+
+        const header = document.createElement("div");
+        header.style.fontSize = "11px";
+        header.style.color = "#777";
+        header.style.marginTop = "4px";
+        header.textContent = `部位：${slot}（query: ${query}）`;
+        container.appendChild(header);
+
+        if (block.error) {
+          const errEl = document.createElement("div");
+          errEl.style.fontSize = "11px";
+          errEl.style.color = "#c00";
+          errEl.textContent = "錯誤：" + block.error;
+          container.appendChild(errEl);
+          return;
+        }
+
+        (block.items || []).forEach((p) => {
+          const card = document.createElement("div");
+          card.className = "product-card";
+
+          const thumb = document.createElement("div");
+          thumb.className = "product-thumb";
+
+          if (p.thumbnail) {
+            const img = document.createElement("img");
+            img.src = p.thumbnail;
+            thumb.appendChild(img);
+          } else {
+            thumb.textContent = "No image";
+          }
+
+          const main = document.createElement("div");
+          main.className = "product-main";
+
+          const title = document.createElement("div");
+          title.className = "product-title";
+          title.textContent = p.title || "(no title)";
+
+          const meta = document.createElement("div");
+          meta.className = "product-meta";
+          meta.textContent = p.source || "";
+
+          const price = document.createElement("div");
+          price.className = "product-price";
+          const priceText =
+            p.price != null
+              ? `${p.price} ${p.currency || ""}`.trim()
+              : "價格不明";
+          price.textContent = priceText;
+
+          const link = document.createElement("a");
+          link.className = "product-link";
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.href = p.link || "#";
+          link.textContent = p.link ? "前往商品頁" : "無連結";
+
+          main.appendChild(title);
+          main.appendChild(meta);
+          main.appendChild(price);
+          main.appendChild(link);
+
+          card.appendChild(thumb);
+          card.appendChild(main);
+
+          container.appendChild(card);
+        });
+      });
+    }
+
+    async function searchSimilarProducts() {
+      const status = document.getElementById("product-status");
+      const container = document.getElementById("product-results");
+      container.innerHTML = "";
+      status.textContent = "正在呼叫 /api/search-products 並透過 SerpApi 搜尋商品…";
+
+      try {
+        const items = buildTestItemsForSearch();
+
+        const resp = await fetch("/api/search-products", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items })
+        });
+
+        const text = await resp.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          console.error("search-products raw:", text);
+          throw new Error("後端回傳非 JSON：" + text.slice(0, 120));
+        }
+
+        if (!resp.ok) {
+          console.error("search-products error detail:", data);
+          throw new Error(
+            "API 回應失敗：" + resp.status + "／" + (data.error || "unknown")
+          );
+        }
+
+        console.log("search-products data:", data);
+        renderProductResults(data);
+      } catch (err) {
+        console.error(err);
+        status.textContent = "搜尋商品時發生錯誤：" + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
